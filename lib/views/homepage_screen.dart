@@ -1,19 +1,18 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_date_picker_timeline/flutter_date_picker_timeline.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:share_plus/share_plus.dart';
+
 import 'package:task2/controller/task_controller.dart';
 import 'package:task2/models/task_model.dart';
 import 'package:task2/views/add_task_page.dart';
 import 'package:task2/theme/theme_controller.dart';
 import 'package:task2/theme/theme_scheme.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-GlobalKey<ScaffoldState> _key = GlobalKey();
+
+//GlobalKey<ScaffoldState> _key = GlobalKey();
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -36,7 +35,7 @@ class _HomePageState extends State<HomePage> {
     var monthinit = DateTime.now().month;
     var yearinit = DateTime.now().year;
     return Scaffold(
-      key: _key,
+      // key: _key,
       body: Column(
         children: [
           const SizedBox(height: 10),
@@ -48,65 +47,7 @@ class _HomePageState extends State<HomePage> {
           _taskCard(),
         ],
       ),
-      drawer: Drawer(
-          child: ListView(
-        children: [
-          DrawerHeader(
-              child: Image.asset(
-            "assets/log.png",
-            // scale: 3,
-          )),
-          ListTile(
-            title: Text(
-              'Change Theme',
-              style: GoogleFonts.lato(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onTap: () {
-              if (Get.isDarkMode) {
-                //themecontroller.changeTheme(Themes.lightTheme);
-                themecontroller.switchTheme(ThemeMode.light);
-                themecontroller.saveThemeFromBox(false);
-              } else {
-                //themecontroller.changeTheme(Themes.lightTheme);
-                themecontroller.switchTheme(ThemeMode.dark);
-                themecontroller.saveThemeFromBox(true);
-              }
-            },
-          ),
-          ListTile(
-              title: Text(
-                'Redo on gitHub',
-                style: GoogleFonts.lato(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onTap: () async {
-                _launchUrl();
-              }),
-          ListTile(
-            title: Text(
-              'Share Redo',
-              style: GoogleFonts.lato(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onTap: () async {
-              await Share.share('Hey guys im using this app for a while and its awesome ! make sure you checking this out ... ');
-              ;
-            },
-          ),
-          const SizedBox(height:470),
-          Padding(
-            padding: const EdgeInsets.only(left: 60),
-            child: Text("Powered By EddyHzn",style: GoogleFonts.lato(fontSize: 15, fontWeight: FontWeight.bold,),),
-          )
-        ],
-      )),
+
       appBar: _appBar(),
     );
   }
@@ -197,13 +138,21 @@ class _HomePageState extends State<HomePage> {
                 width: 16,
               ),
               InkWell(
-
-                onTap:() {
-                    _key.currentState!.openDrawer();
+                onTap: () {
+                  if (Get.isDarkMode) {
+                    //themecontroller.changeTheme(Themes.lightTheme);
+                    themecontroller.switchTheme(ThemeMode.light);
+                    themecontroller.saveThemeFromBox(false);
+                  } else {
+                    //themecontroller.changeTheme(Themes.lightTheme);
+                    themecontroller.switchTheme(ThemeMode.dark);
+                    themecontroller.saveThemeFromBox(true);
+                  }
                 },
-
-                
-                child: const Icon(Icons.menu,size: 40,),
+                child: const Icon(
+                  CupertinoIcons.color_filter,
+                  size: 40,
+                ),
               ),
               Text(
                 "ReDo",
@@ -217,53 +166,47 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<void> _launchUrl() async {
-    if (!await launchUrl(_url)) {
-      throw 'Could not launch $_url';
-    }
-  }
-
-
 
   _taskCard() {
-      return Expanded(child: Obx(
-        () {
-          return ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              itemCount: _taskController.taskList.length,
-              itemBuilder: (_, index) {
-                var cart = _taskController.taskList[index];
+    return Expanded(child: Obx(
+      () {
+        return ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            itemCount: _taskController.taskList.length,
+            itemBuilder: (_, index) {
+              var cart = _taskController.taskList[index];
 
-                if (cart.repeat == 'daily') {
-                  return cart.isCompelet == 1
-                      ? Padding(
-                          padding: const EdgeInsets.only(right: 30, left: 30),
-                          child: TaskTile(item_: cart),
-                        )
-                      : TaskTile(item_: cart);
-                } else if (cart.date == DateFormat.yMd().format(selectedDay)) {
-                  return cart.isCompelet == 1
-                      ? Padding(
-                          padding: const EdgeInsets.only(right: 30, left: 30),
-                          child: TaskTile(item_: cart),
-                        )
-                      : TaskTile(item_: cart);
-                } else {
-                  return Container();
-                }
-              });
-        },
-      ));
-    }
-  
+              if (cart.repeat == 'daily') {
+                return cart.isCompelet == 1
+                    ? Padding(
+                        padding: const EdgeInsets.only(right: 30, left: 30),
+                        child: TaskTile(item_: cart ,recurringMode: true,),
+                      )
+                    : TaskTile(item_: cart,recurringMode: true,);
+              } else if (cart.date == DateFormat.yMd().format(selectedDay)) {
+                return cart.isCompelet == 1
+                    ? Padding(
+                        padding: const EdgeInsets.only(right: 30, left: 30),
+                        child: TaskTile(item_: cart ,recurringMode: false,),
+                      )
+                    : TaskTile(item_: cart,recurringMode: false,);
+              } else {
+                return Container();
+              }
+            });
+      },
+    ));
+  }
 }
 
 // ignore: must_be_immutable
 class TaskTile extends StatelessWidget {
   TaskModel item_;
+  bool recurringMode;
   TaskTile({
     super.key,
     required this.item_,
+    required this.recurringMode
   });
   final TaskController _taskController = Get.put(TaskController());
   @override
@@ -331,18 +274,32 @@ class TaskTile extends StatelessWidget {
                 )
               ],
             ),
-            InkWell(
-              onTap: () {
-                _taskController.markAsCompelet(item_.id!);
-              },
-              child: Container(
-                width: 40,
-                height: 40,
-                margin: const EdgeInsets.only(right: 20),
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(100), color: const Color.fromARGB(125, 255, 255, 255)),
-                child: item_.isCompelet == 1 ? const Icon(Icons.done) : Container(),
-              ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InkWell(
+                  onTap: () {
+                    _taskController.markAsCompelet(item_.id!);
+                  },
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    margin: const EdgeInsets.only(right: 10),
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(100), color: const Color.fromARGB(125, 255, 255, 255)),
+                    child: item_.isCompelet == 1 ? const Icon(Icons.done) : Container(),
+                  ),
+                ),
+               const SizedBox(height: 10,),
+              
+               recurringMode == true ? 
+                const Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: Icon(Icons.repeat,color: Colors.white,),
+                ):Container()
+              
+              
+              ],
             )
           ],
         ),

@@ -47,6 +47,7 @@ dependencies:
   url_launcher: ^6.1.5
   share_plus: ^4.0.10+1
   flutter_spinkit: ^5.1.0
+  flutter_datetime_picker: ^1.5.1
 
 dev_dependencies:
   flutter_test:

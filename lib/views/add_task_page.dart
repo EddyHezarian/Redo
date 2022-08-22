@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:task2/controller/task_controller.dart';
 import 'package:task2/models/task_model.dart';
 import 'package:task2/views/homepage_screen.dart';
 import 'package:time_picker_sheet/widget/sheet.dart';
 import 'package:time_picker_sheet/widget/time_picker.dart';
 import '../theme/theme_controller.dart';
-import '../theme/theme_scheme.dart';
+
 
 class AddTaskPage extends StatefulWidget {
   const AddTaskPage({super.key});
@@ -218,7 +218,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     if (_titleController.text.isNotEmpty && _noteController.text.isNotEmpty) {
       _addTaskToDB();
       _taskController.getTask();
-      Get.to(const HomePage());
+      Get.to(()=>const HomePage());
     } else if (_titleController.text.isEmpty || _noteController.text.isEmpty) {
       Get.snackbar("Requeirs", "Title and Note must be completed",
           snackPosition: SnackPosition.BOTTOM,
@@ -251,7 +251,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
       child: Container(
         width: 120,
         height: 50,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Color.fromARGB(255, 9, 157, 177)),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: const Color.fromARGB(255, 9, 157, 177)),
         child: InkWell(
           onTap: () {
             // Get.to( const AddTaskPage());
@@ -275,10 +275,16 @@ class _AddTaskPageState extends State<AddTaskPage> {
     final result = await TimePicker.show<DateTime?>(
       context: context,
       sheet: TimePickerSheet(
-        sheetTitle: 'Select meeting schedule',
+        minuteInterval: 1,
+        minuteTitleStyle: GoogleFonts.lato(fontWeight: FontWeight.bold, fontSize: 18, color: const Color.fromARGB(255, 82, 158, 184)),
+        hourTitleStyle: GoogleFonts.lato(fontWeight: FontWeight.bold, fontSize: 18, color: const Color.fromARGB(255, 82, 158, 184)),
+        wheelNumberSelectedStyle: GoogleFonts.lato(fontWeight: FontWeight.bold, fontSize: 18, color: const Color.fromARGB(255, 82, 158, 184)),
+        sheetTitle: 'Select Time for event',
         minuteTitle: 'Minute',
         hourTitle: 'Hour',
+        sheetCloseIconColor: const Color.fromARGB(255, 14, 115, 146),
         saveButtonText: 'Save',
+        saveButtonColor: const Color.fromARGB(255, 117, 180, 199),
       ),
     );
     if (result != null) {
@@ -294,22 +300,29 @@ class _AddTaskPageState extends State<AddTaskPage> {
     }
   }
 
+
   _getCalander() async {
-    DateTime? picedDate = await showDatePicker(
+    DatePicker.showDatePicker(
+      context,
 
-      initialDate: DateTime.now(), //
-      context: context, //
-      firstDate: DateTime(2021), //
-      lastDate: DateTime(2220), //
+      showTitleActions: true,
+      minTime: DateTime(2022, 1, 1),
+      maxTime: DateTime(2222, 6, 7),
+      theme:  DatePickerTheme(
+          headerColor: const Color.fromARGB(255, 1, 135, 133),
+          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+          itemStyle:  GoogleFonts.lato(fontWeight: FontWeight.bold, fontSize: 15, color: const Color.fromARGB(255, 0, 0, 0)),
+          doneStyle:  GoogleFonts.lato(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white)),
+      onConfirm: (date) {
+        setState(() {
+          selectedDate = date;
+        });
+        
+      },
+      currentTime: DateTime.now(),
+      locale: LocaleType.en,
     );
-    if (picedDate != null) {
-      setState(() {
-        selectedDate = picedDate;
-      });
-    }
   }
-
-
 
   _appBar() {
     return AppBar(
@@ -360,7 +373,7 @@ class CustomzeInputForm extends StatelessWidget {
                       readOnly: widget == null ? false : true,
                       controller: controller,
                       autofocus: false,
-                      cursorColor: Color.fromARGB(255, 5, 104, 117),
+                      cursorColor: const Color.fromARGB(255, 5, 104, 117),
                       decoration: InputDecoration(
                           focusedBorder: const UnderlineInputBorder(
                               borderSide: BorderSide(style: BorderStyle.none, color: Colors.black, width: 0)),
