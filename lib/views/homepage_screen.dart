@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_date_picker_timeline/flutter_date_picker_timeline.dart';
@@ -6,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:task2/controller/task_controller.dart';
 import 'package:task2/models/task_model.dart';
 import 'package:task2/views/add_task_page.dart';
@@ -23,13 +23,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final Uri _url = Uri.parse("https://github.com/EddyHezarian/Redo");
   Rx<double> widthCart = 16.0.obs;
   final themecontroller = Get.find<ThemeServices>();
   var lightTXT = Themes.lightTheme.textTheme;
   var darkTXT = Themes.darkTheme.textTheme;
   var selectedDay = DateTime.now();
   final TaskController _taskController = Get.put(TaskController());
-
   @override
   Widget build(BuildContext context) {
     var dayinit = DateTime.now().day;
@@ -48,7 +48,8 @@ class _HomePageState extends State<HomePage> {
           _taskCard(),
         ],
       ),
-      drawer: Drawer(child:  ListView(
+      drawer: Drawer(
+          child: ListView(
         children: [
           DrawerHeader(
               child: Image.asset(
@@ -58,40 +59,55 @@ class _HomePageState extends State<HomePage> {
           ListTile(
             title: Text(
               'Change Theme',
-              style:GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.bold,),
+              style: GoogleFonts.lato(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             onTap: () {
-               if (Get.isDarkMode) {
-              //themecontroller.changeTheme(Themes.lightTheme);
-              themecontroller.switchTheme(ThemeMode.light);
-              themecontroller.saveThemeFromBox(false);
-            } else {
-              //themecontroller.changeTheme(Themes.lightTheme);
-              themecontroller.switchTheme(ThemeMode.dark);
-              themecontroller.saveThemeFromBox(true);
-            }
+              if (Get.isDarkMode) {
+                //themecontroller.changeTheme(Themes.lightTheme);
+                themecontroller.switchTheme(ThemeMode.light);
+                themecontroller.saveThemeFromBox(false);
+              } else {
+                //themecontroller.changeTheme(Themes.lightTheme);
+                themecontroller.switchTheme(ThemeMode.dark);
+                themecontroller.saveThemeFromBox(true);
+              }
             },
           ),
           ListTile(
-            title: Text(
-              'Redo on gitHub',
-              style:GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.bold,),
-            ),
-           // onTap: _myLaunchUrl(),
-          ),
+              title: Text(
+                'Redo on gitHub',
+                style: GoogleFonts.lato(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () async {
+                _launchUrl();
+              }),
           ListTile(
             title: Text(
               'Share Redo',
-              style:GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.bold,),
+              style: GoogleFonts.lato(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             onTap: () async {
-
-             ;
+              await Share.share('Hey guys im using this app for a while and its awesome ! make sure you checking this out ... ');
+              ;
             },
           ),
+          const SizedBox(height:470),
+          Padding(
+            padding: const EdgeInsets.only(left: 60),
+            child: Text("Powered By EddyHzn",style: GoogleFonts.lato(fontSize: 15, fontWeight: FontWeight.bold,),),
+          )
         ],
       )),
-      appBar: _appBar(_key),
+      appBar: _appBar(),
     );
   }
 
@@ -169,21 +185,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _appBar(Key key) {
+  _appBar() {
     return AppBar(
+      automaticallyImplyLeading: false,
       elevation: 0,
       actions: [
         Expanded(
           child: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 16,
               ),
               InkWell(
-                onTap: (() {
 
-                }),
-                child: const Icon(Icons.menu),
+                onTap:() {
+                    _key.currentState!.openDrawer();
+                },
+
+                
+                child: const Icon(Icons.menu,size: 40,),
               ),
               Text(
                 "ReDo",
@@ -197,46 +217,45 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-_myLaunchUrl(String url) async {
-  var uri = Uri.parse(url);
-  if (await canLaunchUrl(uri)) {
-    await launchUrl(uri);
-  } else {
-  log("could not launch ${uri.toString()}");
+  Future<void> _launchUrl() async {
+    if (!await launchUrl(_url)) {
+      throw 'Could not launch $_url';
+    }
   }
-}
+
 
 
   _taskCard() {
-    return Expanded(child: Obx(
-      () {
-        return ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            itemCount: _taskController.taskList.length,
-            itemBuilder: (_, index) {
-              var cart = _taskController.taskList[index];
+      return Expanded(child: Obx(
+        () {
+          return ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              itemCount: _taskController.taskList.length,
+              itemBuilder: (_, index) {
+                var cart = _taskController.taskList[index];
 
-              if (cart.repeat == 'daily') {
-                return cart.isCompelet == 1
-                    ? Padding(
-                        padding: const EdgeInsets.only(right: 30, left: 30),
-                        child: TaskTile(item_: cart),
-                      )
-                    : TaskTile(item_: cart);
-              } else if (cart.date == DateFormat.yMd().format(selectedDay)) {
-                return cart.isCompelet == 1
-                    ? Padding(
-                        padding: const EdgeInsets.only(right: 30, left: 30),
-                        child: TaskTile(item_: cart),
-                      )
-                    : TaskTile(item_: cart);
-              } else {
-                return Container();
-              }
-            });
-      },
-    ));
-  }
+                if (cart.repeat == 'daily') {
+                  return cart.isCompelet == 1
+                      ? Padding(
+                          padding: const EdgeInsets.only(right: 30, left: 30),
+                          child: TaskTile(item_: cart),
+                        )
+                      : TaskTile(item_: cart);
+                } else if (cart.date == DateFormat.yMd().format(selectedDay)) {
+                  return cart.isCompelet == 1
+                      ? Padding(
+                          padding: const EdgeInsets.only(right: 30, left: 30),
+                          child: TaskTile(item_: cart),
+                        )
+                      : TaskTile(item_: cart);
+                } else {
+                  return Container();
+                }
+              });
+        },
+      ));
+    }
+  
 }
 
 // ignore: must_be_immutable

@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:task2/db/data_base.dart';
-import 'package:task2/views/homepage_screen.dart';
+
 import 'package:task2/theme/theme_controller.dart';
 import 'package:task2/theme/theme_scheme.dart';
+import 'package:task2/views/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
       theme: Themes.lightTheme,
       themeMode: themeServices.theme,
       darkTheme: Themes.darkTheme,
-      home: const HomePage(),
+      home: const SplashScreen(),
     );
   }
 }
