@@ -22,6 +22,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // ignore: unused_field
   final Uri _url = Uri.parse("https://github.com/EddyHezarian/Redo");
   Rx<double> widthCart = 16.0.obs;
   final themecontroller = Get.find<ThemeServices>();

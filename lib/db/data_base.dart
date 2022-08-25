@@ -11,7 +11,8 @@ class DbService {
       return;
     }
     try {
-      String _path = await getDatabasesPath() + 'Tasks.db';
+      // ignore: no_leading_underscores_for_local_identifiers
+      String _path = '${await getDatabasesPath()}Tasks.db';
       _db = await openDatabase(_path, version: _version, onCreate: (db, version) {
         //   print("creating a new one ");
         return db.execute(
