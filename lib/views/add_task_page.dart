@@ -20,18 +20,22 @@ class AddTaskPage extends StatefulWidget {
 }
 
 class _AddTaskPageState extends State<AddTaskPage> {
+  //outside controllers
   final themecontroller = Get.find<ThemeServices>();
   final TaskController _taskController = Get.put(TaskController());
+
+  List<int> reminderList = [5, 10, 15, 20];
+  List<String> repeatList = ["none", "daily", "weekly", "monthly"];
+
+  // container Controllers 
   var selectedDate = DateTime.now();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
+  int _selectedColor = 0;
+  int _selectedReminder = 5; 
+  String _selectedRepeat = "none";
   DateTime _startTime = DateTime.now();
   DateTime _endTime = DateTime(2022, 8, 20, 9, 0, 0, 0, 0);
-  int _selectedReminder = 5;
-  List<int> reminderList = [5, 10, 15, 20];
-  String _selectedRepeat = "none";
-  List<String> repeatList = ["none", "daily", "weekly", "monthly"];
-  int _selectedColor = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -232,16 +236,13 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   _addTaskToDB() async {
     await _taskController.addTask(
-        task: TaskModel(
-      title: "${_titleController.text}",
-      note: "${_noteController.text}",
+      task: TaskModel(
+      title: _titleController.text, note: _noteController.text,
       date: DateFormat.yMd().format(selectedDate),
-      color: _selectedColor,
-      repeat: _selectedRepeat,
-      remind: _selectedReminder,
+      color: _selectedColor, repeat: _selectedRepeat, 
+      remind: _selectedReminder,isCompelet: 0,
       startTime: DateFormat("hh:mm a").format(_startTime).toString(),
       endTime: DateFormat("hh:mm a").format(_endTime).toString(),
-      isCompelet: 0,
     ));
   }
 
@@ -300,7 +301,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
     }
   }
 
-
   _getCalander() async {
     DatePicker.showDatePicker(
       context,
@@ -334,6 +334,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
             }));
   }
 }
+
+
 
 class CustomzeInputForm extends StatelessWidget {
   final Widget? widget;

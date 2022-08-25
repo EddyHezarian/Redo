@@ -212,17 +212,21 @@ class TaskTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      //delete task
       onLongPress: () {
         _BotomSheetForDelete(context, item_);
       },
+
       child: Container(
         //decorating task tile
         height: 130,
         margin: const EdgeInsets.all(16),
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), color: _getColor(item_.color!)),
+        
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            //titel . date . note 
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -238,7 +242,7 @@ class TaskTile extends StatelessWidget {
                     ),
                   ),
                 ),
-                //time
+                //time and date with clock icon
                 Padding(
                   padding: const EdgeInsets.only(left: 20, top: 6),
                   child: Row(
@@ -274,9 +278,11 @@ class TaskTile extends StatelessWidget {
                 )
               ],
             ),
+           //check box and recurring icon 
             Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,        
               children: [
+                 //check box
                 InkWell(
                   onTap: () {
                     _taskController.markAsCompelet(item_.id!);
@@ -291,14 +297,12 @@ class TaskTile extends StatelessWidget {
                   ),
                 ),
                const SizedBox(height: 10,),
-              
+               //recurring icon
                recurringMode == true ? 
                 const Padding(
                   padding: EdgeInsets.only(right: 8),
                   child: Icon(Icons.repeat,color: Colors.white,),
-                ):Container()
-              
-              
+                ):Container() 
               ],
             )
           ],

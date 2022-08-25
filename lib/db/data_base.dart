@@ -31,7 +31,7 @@ class DbService {
 
   static Future<int> insert(TaskModel? task) async {
     return await _db?.insert(_tableName, task!.toJason()) ?? 1;
-  }
+  } 
 
   static delete(TaskModel task) async {
     await _db!.delete(_tableName, where: 'id=?', whereArgs: [task.id]);

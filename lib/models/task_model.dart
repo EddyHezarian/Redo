@@ -51,7 +51,6 @@ class TaskModel {
     data['date'] = this.date;
     data['remind'] = this.remind;
     data['repeat'] = this.repeat;
-
     return data;
   }
 }
